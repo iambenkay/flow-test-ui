@@ -6,13 +6,13 @@ import { withRouter } from 'react-router-dom'
 import { withAuthorization } from '../Auth';
 
 const INITIAL_QUESTION_CREATION_STATE = {
-    questionNo: 1,
-    questionBody: "How are you today",
-    optionA: "I am good",
-    optionB: "I don't care",
-    optionC: "None of the above",
-    optionD: "Haq Haq Haq",
-    answer: "C",
+    questionNo: "",
+    questionBody: "",
+    optionA: "",
+    optionB: "",
+    optionC: "",
+    optionD: "",
+    answer: "",
     error: null,
     success: null,
 }

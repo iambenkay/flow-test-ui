@@ -7,8 +7,8 @@ import ROUTES from '../../routes';
 import {withSession} from '../Session';
 
 const INITIAL_SIGNIN_STATE = {
-    email: 'benjamincath@gmail.com',
-    password: 'Benjamin123$',
+    email: '',
+    password: '',
     error: null,
 }
 

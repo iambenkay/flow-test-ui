@@ -5,11 +5,11 @@ import {withSession} from '../Session'
 import ROUTES from '../../routes';
 
 const INITIAL_SIGNUP_STATE = {
-    firstname: 'benjamin',
-    lastname: 'kayode',
-    passwordOne: 'Benjamin123',
-    passwordTwo: 'Benjamin123',
-    email: 'benjamincath@gmail.com',
+    firstname: '',
+    lastname: '',
+    passwordOne: '',
+    passwordTwo: '',
+    email: '',
     error: null,
 }
 

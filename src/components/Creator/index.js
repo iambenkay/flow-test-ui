@@ -7,11 +7,11 @@ import { withRouter } from 'react-router-dom'
 import { withAuthorization } from '../Auth';
 
 const INITIAL_TEST_CREATION_STATE = {
-    testname: "harvard's test",
-    testid: "harvy100",
-    noOfQuestions: 30,
-    passpercent: 70,
-    duration: 0.2,
+    testname: "",
+    testid: "",
+    noOfQuestions: "",
+    passpercent: "",
+    duration: "",
     error: null
 }
 
@@ -71,7 +71,7 @@ class Creator extends React.Component {
                             <FormControl id="no_of_questions" type="number" name="noOfQuestions" value={noOfQuestions} onChange={this.onChange} placeholder="Enter number of questions test should have" />
                         </FormGroup>
                         <FormGroup>
-                            <FormLabel htmlFor="duration" >Duration</FormLabel>
+                            <FormLabel htmlFor="duration" >Duration (in minutes)</FormLabel>
                             <FormControl id="duration" type="number" name="duration" value={duration} onChange={this.onChange} placeholder="Enter duration of the test" />
                         </FormGroup>
                         <FormGroup>
