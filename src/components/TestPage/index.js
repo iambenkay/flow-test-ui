@@ -61,6 +61,7 @@ class TestPage extends React.Component {
         const { testId } = this.props.match.params
         const solutions = Object.assign({}, this.state.solutions)
         solutions[this.state.current] = event.target.id
+        this.setState({ solutions, expires: data.expires })
         fetch(`${API_HOST}/${testId}/records/`, {
             method: "PUT",
             headers: {
