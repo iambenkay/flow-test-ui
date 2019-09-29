@@ -9,4 +9,4 @@ export default {
     TESTSUBMITTED: "/test/submitted/successfully/:testId/"
 }
 
-export const API_HOST = "http://flow-test.herokuapp.com" + "/api"
+export const API_HOST = "https://flow-test.herokuapp.com" + "/api"
