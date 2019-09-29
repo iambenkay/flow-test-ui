@@ -9,4 +9,4 @@ export default {
     TESTSUBMITTED: "/test/submitted/successfully/:testId/"
 }
 
-export const API_HOST = (process.env.API_HOST || "http://localhost:8081") + "/api"
+export const API_HOST = "http://flow-test.herokuapp.com" + "/api"
