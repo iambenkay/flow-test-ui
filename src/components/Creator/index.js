@@ -2,7 +2,7 @@ import React from 'react'
 import { withSession } from '../Session'
 import CreatorWorks from './works'
 import { Container, Col, Alert, FormText, FormGroup, FormLabel, FormControl, } from 'react-bootstrap'
-import ROUTES, { API_HOST } from '../../routes'
+import { API_HOST } from '../../routes'
 import { withRouter } from 'react-router-dom'
 import { withAuthorization } from '../Auth';
 
@@ -27,7 +27,6 @@ class Creator extends React.Component {
         const { testname, testid, noOfQuestions, passpercent, duration } = this.state
         fetch(`${API_HOST}/assessments/`, {
             method: "POST",
-            mode: "no-cors",
             body: JSON.stringify({
                 name: testname,
                 code: testid,

@@ -1,9 +1,9 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
-import { withSession } from '../Session'
-import { withAuthorization } from '../Auth'
+import { withSession } from '../../Session'
+import { withAuthorization } from '../../Auth'
 import { ListGroup, ListGroupItem } from 'react-bootstrap'
-import { API_HOST } from '../../routes'
+import { API_HOST } from '../../../routes'
 
 class Home extends React.Component {
     constructor(props) {
