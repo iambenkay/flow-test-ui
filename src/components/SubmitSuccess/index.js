@@ -20,7 +20,6 @@ class SubmitSuccess extends React.Component {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 if (data.message) throw new Error(data.message)
                 else this.setState({ records: data })
             })

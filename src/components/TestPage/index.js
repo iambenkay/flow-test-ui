@@ -43,6 +43,19 @@ class TestPage extends React.Component {
             solutions: {},
         }
     }
+    onJump = event => {
+        this.setState({current: +event.target.id})
+        this.setState(state => ({
+            minReached: state.current === 1,
+            maxReached: state.current === state.noOfQuestions,
+        }))
+    }
+    renderJumpButtons(){
+        const {noOfQuestions, solutions} = this.state
+        return Array.from({length: noOfQuestions}, (_, i) => (
+            <button className={`m-1 btn p-2 ${solutions[i + 1] ? "btn-success" : "btn-light"}`} key={i} id={i + 1} onClick={this.onJump}>{i + 1}</button>
+        ))
+    }
     nextQuestion = () => {
         this.setState(state => ({
             current: state.current + 1,
@@ -87,7 +100,6 @@ class TestPage extends React.Component {
             },
         }).then(response => response.json())
             .then(data => {
-                console.log("I happened")
                 if(data.message) throw new Error(data.message)
                 else this.props.history.push(`/test/submitted/successfully/${testId}/`)
             })
@@ -165,6 +177,10 @@ class TestPage extends React.Component {
                 <button disabled={minReached} className="btn btn-danger mr-4" onClick={this.previousQuestion}>Previous</button>
                 <button disabled={maxReached} className="btn btn-success mr-5" onClick={this.nextQuestion}>Next</button>
                 <button className="btn btn-info ml-5" onClick={this.onClick}>Submit</button>
+                <br />
+                <br />
+                <br />
+                {this.renderJumpButtons()}
             </div>
         )
     }
