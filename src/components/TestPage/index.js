@@ -2,7 +2,7 @@ import React from 'react'
 import { withRouter } from 'react-router-dom'
 import { withSession } from '../Session'
 import { API_HOST } from '../../routes'
-import { withAuthorization } from '../Auth';
+import { withAuthorization, noAdmin } from '../Auth';
 
 class Clock extends React.Component {
     constructor(props) {
@@ -11,12 +11,12 @@ class Clock extends React.Component {
     }
     componentDidMount(){
         this.interval = setInterval(x => {
-            if(Date.now() >= this.props.elapsed){
+            if(Date.now() >= new Date(this.props.elapsed)){
                 clearInterval(this.interval)
                 this.props.onTimeUp()
                 return;
             }
-            const y = this.props.elapsed - Date.now()
+            const y = new Date(this.props.elapsed) - Date.now()
             this.setState({ minutes: parseInt(y / 60000), seconds: parseInt((y % 60000) / 1000) })
         }, 1000)
     }
@@ -41,6 +41,7 @@ class TestPage extends React.Component {
             noOfQuestions: null,
             questions: [],
             solutions: {},
+            expires: 0,
         }
     }
     onJump = event => {
@@ -71,37 +72,27 @@ class TestPage extends React.Component {
         }))
     }
     addSolution = event => {
-        const { testId } = this.props.match.params
         const solutions = Object.assign({}, this.state.solutions)
         solutions[this.state.current] = event.target.id
         this.setState({ solutions })
-        // The fix I made
-        fetch(`${API_HOST}/${testId}/records/`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.props.session.token}`
-            },
-            body: JSON.stringify({ solutions }),
-        }).then(response => response.json())
-            .then(data => {
-                this.setState({ solutions: data.solutions, expires: data.expires })
-            })
-            .catch(error => {
-                console.error(error)
-            })
     }
     onClick = () => {
         const { testId } = this.props.match.params
-        fetch(`${API_HOST}/${testId}/records/submit`, {
-            method: "POST",
+        const {solutions} = this.state
+        fetch(`${API_HOST}/records/`, {
+            method: "PUT",
             headers: {
-                "Authorization": `Bearer ${this.props.session.token}`
+                "Authorization": `Bearer ${this.props.session.token}`,
+                "Content-Type": "application/json",
             },
+            body: JSON.stringify({
+                solutions,
+                testId,
+            })
         }).then(response => response.json())
             .then(data => {
-                if(data.message) throw new Error(data.message)
-                else this.props.history.push(`/test/submitted/successfully/${testId}/`)
+                if(data.error) throw new Error(data.error)
+                else this.props.history.push(`/records/`)
             })
             .catch(error => {
                 console.error(error)
@@ -109,7 +100,11 @@ class TestPage extends React.Component {
     }
     componentDidMount() {
         const { testId } = this.props.match.params
-        fetch(`${API_HOST}/assessments/${testId}/`)
+        fetch(`${API_HOST}/tests/${testId}/`, {
+            headers: {
+                "Authorization": `Bearer ${this.props.session.token}`,
+            },
+        })
             .then(response => response.json())
             .then(test => {
                 const { questions, noOfQuestions } = test
@@ -117,27 +112,30 @@ class TestPage extends React.Component {
                     questions,
                     noOfQuestions,
                 })
+                this.setState(state => ({
+                    minReached: state.current === 1,
+                    maxReached: state.current === +state.noOfQuestions,
+                }))
             })
-        fetch(`${API_HOST}/${testId}/records/`, {
+        fetch(`${API_HOST}/records/`, {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${this.props.session.token}`
-            }
+                "Authorization": `Bearer ${this.props.session.token}`,
+                "Content-Type": "application/json",
+            },
+            body : JSON.stringify({testId})
         }).then(response => response.json())
             .then(data => {
-                this.setState({ solutions: data.solutions, expires: data.expires })
+                if(data.error) throw new Error(data.error)
+                this.setState({ expires: data.expires })
             })
             .catch(error => {
-                console.error(error)
+                console.error(error.message)
             })
-        this.setState(state => ({
-            minReached: state.current === 1,
-            maxReached: state.current === state.noOfQuestions,
-        }))
     }
     render() {
         const { current, noOfQuestions, questions, maxReached, minReached, solutions } = this.state;
-        const question = questions.find(x => x.questionNo === current)
+        const question = questions.find(x => +x.questionNo === current)
 
         return (
             <div className="container mt-3">
@@ -187,4 +185,4 @@ class TestPage extends React.Component {
 }
 
 
-export default withRouter(withSession(withAuthorization(TestPage)))
+export default withRouter(withSession(noAdmin(withAuthorization(TestPage))))

@@ -1,7 +1,7 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
 import { withSession } from '../Session'
-import { withAuthorization } from '../Auth'
+import { withAuthorization, noAdmin } from '../Auth'
 import { ListGroup, ListGroupItem } from 'react-bootstrap'
 import { API_HOST } from '../../routes'
 
@@ -11,10 +11,10 @@ class Home extends React.Component {
         this.state = { tests: null }
     }
     componentDidMount() {
-        fetch(`${API_HOST}/assessments/`, {
+        fetch(`${API_HOST}/tests/`, {
             headers: {
                 "Authorization": `Bearer ${this.props.session.token}`,
-            }
+            },
         })
             .then(response => response.json())
             .then(tests => {
@@ -52,9 +52,9 @@ class Home extends React.Component {
 class Tests extends React.Component {
     renderTests() {
         return this.props.tests.map(test => (
-            <ListGroupItem key={test.id} className="text-left">
+            <ListGroupItem key={test._id} className="text-left">
                 {test.name}
-                <button className="btn ml-3 btn-success" onClick={() => { this.props.onClick(test.id) }}>Take Test</button>
+                <button className="btn ml-3 btn-success float-right" onClick={() => { this.props.onClick(test._id) }}>Take Test</button>
             </ListGroupItem>
         ))
     }
@@ -68,4 +68,4 @@ class Tests extends React.Component {
     }
 }
 
-export default withRouter(withSession(withAuthorization(Home)));
+export default withRouter(withSession(noAdmin(withAuthorization(Home))));

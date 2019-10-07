@@ -5,11 +5,11 @@ export default {
     SIGNIN: "/signin/",
     SIGNUP: "/signup/",
     CREATOR: "/creator/",
-    MYTESTS: "/mytests/",
-    TESTSUBMITTED: "/test/submitted/successfully/:testId/"
+    MANAGETESTS: "/managetests/",
+    TESTSUBMITTED: "/records/",
 }
 
 const production_api = "https://flow-test.herokuapp.com"
 const local_api = "http://localhost:8081"
 
-export const API_HOST = production_api + "/api"
+export const API_HOST = local_api + "/api"

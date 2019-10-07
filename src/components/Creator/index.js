@@ -7,6 +7,7 @@ import { withRouter } from 'react-router-dom'
 import { withAuthorization } from '../Auth';
 
 const INITIAL_TEST_CREATION_STATE = {
+    current: 1,
     testname: "",
     testid: "",
     noOfQuestions: "",
@@ -25,7 +26,7 @@ class Creator extends React.Component {
     }
     onSubmit = event => {
         const { testname, testid, noOfQuestions, passpercent, duration } = this.state
-        fetch(`${API_HOST}/assessments/`, {
+        fetch(`${API_HOST}/tests/`, {
             method: "POST",
             body: JSON.stringify({
                 name: testname,
@@ -40,9 +41,9 @@ class Creator extends React.Component {
             },
         }).then(response => response.json())
             .then(data => {
-                if (data.message) throw new Error(data.message)
+                if (data.error) throw new Error(data.error)
                 else {
-                    this.props.history.push(`/creator/${data.id}/manage`)
+                    this.props.history.push(`/creator/${data._id}/manage`)
                 }
             })
             .catch(error => {
