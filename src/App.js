@@ -17,7 +17,6 @@ class App extends React.Component {
     super(props)
     this.state = {
       user: props.session.user,
-      roles: props.session.roles,
     }
   }
   componentDidMount() {
@@ -26,17 +25,20 @@ class App extends React.Component {
         user: this.props.session.user
             ? Object.assign({}, this.props.session.user)
             : null,
-        roles: this.props.session.roles
-            ? Object.assign({}, this.props.session.roles)
-            : null,
         })
+        this.setState({
+          user: this.props.session.user
+              ? Object.assign({}, this.props.session.user)
+              : null,
+          })
     })
+
   }
   componentWillUnmount() {
     this.listener()
   }
   render() {
-    const { user, roles } = this.state
+    const { user } = this.state
     return (
       <Router>
         {
@@ -47,12 +49,12 @@ class App extends React.Component {
               <Navbar.Collapse id="navigation-bar">
                 <Nav className="mr-auto">
                   {
-                      roles && roles.isSuperUser
-                      ? <NavLink to={ROUTES.MANAGETESTS} className="nav-link font-weight-bold">Manage tests</NavLink>
-                      : <>
-                          <NavLink to={ROUTES.HOME} className="nav-link font-weight-bold">Home</NavLink>
-                          <NavLink to={ROUTES.TESTSUBMITTED} className="nav-link font-weight-bold">Records</NavLink>
-                        </>
+                      user.isSuperUser
+                          ? <NavLink to={ROUTES.MANAGETESTS} className="nav-link font-weight-bold">Manage tests</NavLink>
+                          : <>
+                              <NavLink to={ROUTES.HOME} className="nav-link font-weight-bold">Home</NavLink>
+                              <NavLink to={ROUTES.TESTSUBMITTED} className="nav-link font-weight-bold">Records</NavLink>
+                            </>
                   }
                 </Nav>
               <span className="nav-link text-white font-weight-bold"><span className="text-dark">{user.email}</span> {user.firstName} {user.lastName}</span>

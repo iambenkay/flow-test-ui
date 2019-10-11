@@ -1,12 +1,25 @@
 import React from 'react'
 import {API_HOST} from '../../routes'
+import {Redirect} from 'react-router-dom'
 
 export default class Session {
     constructor(){
-        this.token = window.localStorage.getItem("FLOW_TEST_TOKEN")
-        this.user = JSON.parse(window.localStorage.getItem("FLOW_TEST_USER") || null)
-        this.roles = JSON.parse(window.localStorage.getItem("FLOW_TEST_ROLES") || null)
+        this.token = window.localStorage.getItem("FLOW_TEST_TOKEN") || null
         this.authEvent = new Event('AuthStateChanged')
+        this.user = JSON.parse(window.localStorage.getItem("FLOW_TEST_USER") || null)
+        if(this.token){
+            this.getUser()
+                .then(data => {
+                    this.user = data
+                    window.localStorage.setItem("FLOW_TEST_USER", JSON.stringify(data))
+                })
+                .finally(() => {
+                    document.dispatchEvent(this.authEvent)
+                })
+        } else {
+            this.user = null
+            window.localStorage.removeItem("FLOW_TEST_USER")
+        }
 
     }
     doSignIn = (email, password) => {
@@ -27,14 +40,11 @@ export default class Session {
             window.localStorage.setItem("FLOW_TEST_TOKEN", token)
             this.user = user
             window.localStorage.setItem("FLOW_TEST_USER", JSON.stringify(user))
-            const roles = await this.getRoles()
-            this.roles = roles
-            window.localStorage.setItem("FLOW_TEST_ROLES", JSON.stringify(roles))
             document.dispatchEvent(this.authEvent)
         })
     }
-    getRoles = () => {
-        return fetch(`${API_HOST}/auth/roles/`, {
+    getUser = () => {
+        return fetch(`${API_HOST}/auth/user/`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${this.token}`
@@ -44,6 +54,9 @@ export default class Session {
             return response.json()})
         .catch((e) => {
             console.error(e.message)
+            this.token = null
+            window.localStorage.removeItem("FLOW_TEST_TOKEN")
+            document.dispatchEvent(this.authEvent)
         })
     }
     doSignUp = (email, lastName, firstName, authPassword) => {
@@ -64,9 +77,6 @@ export default class Session {
         this.token = null
         window.localStorage.removeItem("FLOW_TEST_TOKEN")
         this.user = null
-        window.localStorage.removeItem("FLOW_TEST_USER")
-        this.roles = null
-        window.localStorage.removeItem("FLOW_TEST_ROLES")
         document.dispatchEvent(this.authEvent)
     }
     onAuthStateChanged = callback => {

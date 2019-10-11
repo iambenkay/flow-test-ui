@@ -11,6 +11,7 @@ const INITIAL_SIGNUP_STATE = {
     passwordTwo: '',
     email: '',
     error: null,
+    loading: false,
 }
 
 class SignUp extends React.Component {
@@ -22,13 +23,17 @@ class SignUp extends React.Component {
         this.setState({ [event.target.name]: event.target.value });
     }
     onSubmit = event => {
+        this.setState({loading: true})
         const { firstname, lastname, email, passwordOne } = this.state;
         this.props.session.doSignUp(email, lastname, firstname, passwordOne)
             .then(() => {
                 this.setState({ ...INITIAL_SIGNUP_STATE });
                 this.props.history.push(ROUTES.SIGNIN);
             })
-            .catch(error => { this.setState({ error }) });
+            .catch(error => { this.setState({ error }) })
+            .finally(() => {
+                this.setState({loading: false})
+             })
 
         event.preventDefault();
     }
@@ -41,8 +46,9 @@ class SignUp extends React.Component {
             passwordTwo,
             email,
             error,
+            loading
         } = this.state;
-        const isInvalid = passwordOne !== passwordTwo || passwordOne === '' || firstname === '' || email === '' || lastname === '';
+        const isInvalid = passwordOne !== passwordTwo || passwordOne === '' || firstname === '' || email === '' || lastname === '' || loading;
         return (
             <Container className="py-5 row mx-auto">
                 <Col xs={12} md={5} className="mx-md-auto">
