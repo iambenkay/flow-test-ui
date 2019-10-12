@@ -36,6 +36,7 @@ class App extends React.Component {
   }
   componentWillUnmount() {
     this.listener()
+    
   }
   render() {
     const { user } = this.state

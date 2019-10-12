@@ -6,7 +6,7 @@ export default class Session {
     constructor(){
         this.token = window.localStorage.getItem("FLOW_TEST_TOKEN") || null
         this.authEvent = new Event('AuthStateChanged')
-        this.user = JSON.parse(window.localStorage.getItem("FLOW_TEST_USER") || null)
+        this.user = (window.localStorage.getItem("FLOW_TEST_USER") !== "undefined") ? JSON.parse(window.localStorage.getItem("FLOW_TEST_USER")) : null
         if(this.token){
             this.getUser()
                 .then(data => {
@@ -31,15 +31,12 @@ export default class Session {
             body: JSON.stringify({email, password}),
         })
         .then(response => response.json())
-        .then(data => {
-            if (!data.error) return data
-            else throw new Error(data.error)
-        })
-        .then(async ({token, user}) => {
-            this.token = token
-            window.localStorage.setItem("FLOW_TEST_TOKEN", token)
-            this.user = user
-            window.localStorage.setItem("FLOW_TEST_USER", JSON.stringify(user))
+        .then(async (data) => {
+            if (data.error) throw new Error(data.error)
+            this.token = data.token
+            window.localStorage.setItem("FLOW_TEST_TOKEN", data.token)
+            this.user = data.user
+            window.localStorage.setItem("FLOW_TEST_USER", JSON.stringify(data.user))
             document.dispatchEvent(this.authEvent)
         })
     }

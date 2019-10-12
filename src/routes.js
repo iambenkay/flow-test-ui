@@ -12,4 +12,4 @@ export default {
 const production_api = "https://flow-test.herokuapp.com"
 const local_api = "http://localhost:8081"
 
-export const API_HOST = production_api + "/api"
+export const API_HOST = local_api + "/api"
